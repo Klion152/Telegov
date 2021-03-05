@@ -1,13 +1,18 @@
-import re
-import subprocess
-device_re = re.compile("Bus\s+(?P<bus>\d+)\s+Device\s+(?P<device>\d+).+ID\s(?P<id>\w+:\w+)\s(?P<tag>.+)$", re.I)
-df = subprocess.check_output("lsusb")
-devices = []
-for i in df.split('\n'):
-    if i:
-        info = device_re.match(i)
-        if info:
-            dinfo = info.groupdict()
-            dinfo['device'] = '/dev/bus/usb/%s/%s' % (dinfo.pop('bus'), dinfo.pop('device'))
-            devices.append(dinfo)
-print (devices)
+from socket import *
+import time
+
+startTime = time.time()
+
+if __name__ == '__main__':
+    target = input('Enter the host to be scanned: ')
+    t_IP = gethostbyname(target)
+    print('Starting scan on host: ', t_IP)
+
+    for i in range(50, 500):
+        s = socket(AF_INET, SOCK_STREAM)
+
+        conn = s.connect_ex((t_IP, i))
+        if (conn == 0):
+            print('Port %d: OPEN' % (i,))
+        s.close()
+print('Time taken:', time.time() - startTime)
